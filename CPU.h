@@ -17,7 +17,7 @@ using namespace std;
 
 class CPU {
 private:
-	int dmemory[4096]; //data memory byte addressable in little endian fashion;
+	bitset<8> dmemory[512]; //data memory byte addressable in little endian fashion;
 	unsigned long PC; //pc 
 
 	//important control signals
@@ -46,7 +46,8 @@ private:
 	bitset<32> aluSecondSrc;
 
 
-	//Memory Storage:
+	//Memory stage:
+	bitset<32> dataRead;
 	
 
 	
@@ -75,7 +76,7 @@ public:
 	void aluOperation();
 	
 	//Memory operations
-	
+	void memoryOperation();
 	
 	
 };
@@ -121,6 +122,8 @@ public:
 			registers[index] = value; // excludes 0 since x0 should always store 0.
 		}
 	};
+
+
 
 
 

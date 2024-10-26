@@ -14,9 +14,9 @@ enum ALUControl {
 CPU::CPU()
 {
 	PC = 0; //set PC to 0
-	for (int i = 0; i < 4096; i++) //copy instrMEM
+	for (int i = 0; i < 512; i++) //copy instrMEM
 	{
-		dmemory[i] = (0);
+		dmemory[i] = bitset<8>("0x0");
 	}
 
 	// initializing register file.
@@ -245,7 +245,47 @@ ADD = 0b000,
 
 }
 
+//Memory Stage:
 
+//Memory operation:
+
+void CPU::memoryOperation(){
+	if (memWrite){
+		// writes the value in rs2Val into the address.
+
+		unsigned long index = aluResult.to_ulong() / 8;
+
+		if (index < 512){
+			//each element in dememory is stored in bytes, so we'll have to iteratively fill up dataRead.
+			for (int i = 0; i < 4; i++){
+				bitset<8> placeholder;
+
+				for(int j = 0; j < 8; j++){
+					placeholder[j] = readData[j + i * 8];
+				}
+				dmemory[index + i] = placeholder;
+				
+			}
+		}
+	}
+
+
+	if (memRead){
+		//Basically, we get an address from ALU, but the dmemory is done in arrays. We have to convert.
+		unsigned long index = aluResult.to_ulong() / 8; // To account for the fact that memories are stored in bytes fashion.
+
+		if (index < 512){
+			//each element in dememory is stored in bytes, so we'll have to iteratively fill up dataRead.
+			for (int i = 0; i < 4; i++){
+				bitset<8> placeholder = dmemory[index + i];
+				for(int j = 0; j < 8; j++){
+					readData[j + i * 8] = placeholder[j];
+				}
+			}
+		}
+	}
+	else readData = bitset<32> ("0x0"); // garbage value
+}
 
 
 
